@@ -1,0 +1,72 @@
+; Code Composer Project File, Version 2.0 (do not modify or remove this line)
+
+[Project Settings]
+ProjectDir="E:\LEO\WorkSpace\Matlab\Quardrotor FLC\Roll_Pitch\PIDCtrl_2_ticcs_rom\"
+ProjectType=Executable
+CPUFamily=TMS320C28XX
+Tool="Compiler"
+Tool="CustomBuilder"
+Tool="DspBiosBuilder"
+Tool="Linker"
+Config="CustomMW"
+Config="Debug"
+Config="Release"
+
+[Source Files]
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\rtlib\IQmath_fpu32.lib"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_ADC_cal.asm"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_CodeStartBranch.asm"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_CpuTimers.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_DefaultIsr.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_DMA.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_GlobalVariableDefs.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_MemCopy.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_PieCtrl.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_PieVect.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_SysCtrl.c"
+Source="D:\MATLAB\SupportPackages\R2014a\tic2000\src\DSP2833x_usDelay.asm"
+Source="DSP28xx_SciUtil.c"
+Source="MW_c28xx_board.c"
+Source="MW_c28xx_csl.c"
+Source="MW_c28xx_pwm.c"
+Source="PIDCtrl_2.c"
+Source="PIDCtrl_2_main.c"
+Source="DSP2833x_Headers_nonBIOS.cmd"
+Source="F28335.cmd"
+
+["Compiler" Settings: "CustomMW"]
+Options=-fr"E:\LEO\WorkSpace\Matlab\Quardrotor FLC\Roll_Pitch\PIDCtrl_2_ticcs_rom\CustomMW" -i"D:\MATLAB\SupportPackages\R2014a\tic2000\inc" -i"E:\LEO\WorkSpace\Matlab\Quardrotor FLC\Roll_Pitch\PIDCtrl_2_ticcs" -i"E:\LEO\WorkSpace\Matlab\Quardrotor FLC\Roll_Pitch" -i"D:\Program Files\MATLAB\R2014a\extern\include" -i"D:\Program Files\MATLAB\R2014a\simulink\include" -i"D:\Program Files\MATLAB\R2014a\rtw\c\src" -i"D:\Program Files\MATLAB\R2014a\rtw\c\src\ext_mode\common" -i"D:\Program Files\MATLAB\R2014a\rtw\c\ert" -i"E:\LEO\WorkSpace\Matlab\Quardrotor FLC\Roll_Pitch\slprj\idelink_ert\_sharedutils" -d"__TICCSC__" -d"RT" -d"USE_RTMODEL" -d"MODEL=PIDCtrl_2" -d"NUMST=1" -d"NCSTATES=0" -d"HAVESTDIO=" -d"ONESTEPFCN=1" -d"TERMFCN=0" -d"MAT_FILE=0" -d"MULTI_INSTANCE_CODE=0" -d"INTEGER_CODE=0" -d"MT=0" -d"CLASSIC_INTERFACE=0" -d"ALLOCATIONFCN=0" -d"TID01EQ=0" -ml -v28 --float_support=fpu32
+
+["Compiler" Settings: "Debug"]
+Options=-g -pdsw225 -fr"$(Proj_dir)\Debug" -d"_DEBUG" -d"LARGE_MODEL" -ml -v28
+
+["Compiler" Settings: "Release"]
+Options=-pdsw225 -o3 -fr"$(Proj_dir)\Release" -d"LARGE_MODEL" -ml -v28
+
+["Linker" Settings: "CustomMW"]
+Options=-c -m"PIDCtrl_2.map" -o"PIDCtrl_2.out" -stack0x200 -x -l"rts2800_fpu32.lib"
+
+["Linker" Settings: "Debug"]
+Options=-c -m".\Debug\PIDCtrl_2.map" -o".\Debug\PIDCtrl_2.out" -w -x
+
+["Linker" Settings: "Release"]
+Options=-c -m".\Release\PIDCtrl_2.map" -o".\Release\PIDCtrl_2.out" -w -x
+
+["DSP2833x_Headers_nonBIOS.cmd" Settings: "CustomMW"]
+LinkOrder=1
+
+["DSP2833x_Headers_nonBIOS.cmd" Settings: "Debug"]
+LinkOrder=1
+
+["DSP2833x_Headers_nonBIOS.cmd" Settings: "Release"]
+LinkOrder=1
+
+["F28335.cmd" Settings: "CustomMW"]
+LinkOrder=1
+
+["F28335.cmd" Settings: "Debug"]
+LinkOrder=1
+
+["F28335.cmd" Settings: "Release"]
+LinkOrder=1
+

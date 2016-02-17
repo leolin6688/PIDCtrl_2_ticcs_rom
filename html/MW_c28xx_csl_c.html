@@ -1,0 +1,172 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>RTW Report - MW_c28xx_csl.c</title>
+<style> .LN { font-style: italic; color: #888888 } </style>
+<style> .CT { font-style: italic; color: #117755 } </style>
+<style> .PP { font-style: bold;   color: #992211 } </style>
+<style> .KW { font-style: bold;   color: #112266 } </style>
+<style> .DT { font-style: bold;   color: #112266 } </style>
+<link rel="stylesheet" type="text/css" href="rtwreport.css"></link><script language="JavaScript" type="text/javascript" src="rtwreport_utils.js"></script>
+<SCRIPT type="text/javascript" src="rtwannotate.js"></SCRIPT>
+</head>
+<body bgcolor="#eeeeee" text="#1122aa" onload="try {if (top) { if (top.rtwFileOnLoad) top.rtwFileOnLoad(window.document); else local_onload();}} catch(err) {};if (typeof rtwannotate === 'function') {rtwannotate('MW_c28xx_csl_c_cov.xml');}">
+<p>
+<table border="0" cellspacing="0" cellpadding="6" width="100%%" height="100%%"><tr><td width="100%%" valign="top" bgcolor="#ffffff">
+<h4>File: <a href="../MW_c28xx_csl.c" target="rtwreport_document_frame" id="linkToText_plain">MW_c28xx_csl.c</a></h4>
+<pre id="RTWcode">
+<span><a class="LN" name="1">    1   </a><span class="DT">void</span> <a href="PIDCtrl_2_main_c.html#fcn_rt_OneStep" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_rt_OneStep');" target="_self"><font color="#1122aa">rt_OneStep</font></a>(<span class="DT">void</span>);
+</span><span><a class="LN" name="2">    2   </a>
+</span><span><a class="LN" name="3">    3   </a><font color="#992211">#</font><span class="PP">include</span> <font color="#992211">&quot;DSP2833x_Device.h&quot;</font>
+</span><span><a class="LN" name="4">    4   </a><font color="#992211">#</font><span class="PP">include</span> <font color="#992211">&quot;DSP2833x_Examples.h&quot;</font>
+</span><span><a class="LN" name="5">    5   </a><font color="#992211">#</font><span class="PP">include</span> <font color="#992211">&quot;DSP2833x_GlobalPrototypes.h&quot;</font>
+</span><span><a class="LN" name="6">    6   </a><font color="#992211">#</font><span class="PP">include</span> <font color="#992211">&quot;rtwtypes.h&quot;</font>
+</span><span><a class="LN" name="7">    7   </a><font color="#992211">#</font><span class="PP">include</span> <font color="#992211">&quot;PIDCtrl_2.h&quot;</font>
+</span><span><a class="LN" name="8">    8   </a><font color="#992211">#</font><span class="PP">include</span> <font color="#992211">&quot;PIDCtrl_2_private.h&quot;</font>
+</span><span><a class="LN" name="9">    9   </a>
+</span><span><a class="LN" name="10">   10   </a><span class="CT">/*-----------------------------------------------------------------------------</span>
+</span><span><a class="LN" name="11">   11   </a><span class="CT"> * void config_schedulerTimer(void)</span>
+</span><span><a class="LN" name="12">   12   </a><span class="CT"> *</span>
+</span><span><a class="LN" name="13">   13   </a><span class="CT"> * Abstract:</span>
+</span><span><a class="LN" name="14">   14   </a><span class="CT"> *      This function configures scheduler timer</span>
+</span><span><a class="LN" name="15">   15   </a><span class="CT"> */</span>
+</span><span><a class="LN" name="16">   16   </a><span class="DT">void</span> <a name="fcn_config_schedulerTimer">config_schedulerTimer</a>(<span class="DT">void</span>)
+</span><span><a class="LN" name="17">   17   </a><b>{</b>
+</span><span><a class="LN" name="18">   18   </a>  InitCpuTimers();
+</span><span><a class="LN" name="19">   19   </a>
+</span><span><a class="LN" name="20">   20   </a>  <span class="CT">/* Configure CPU-Timer 0 to interrupt every 0.01 sec. */</span>
+</span><span><a class="LN" name="21">   21   </a>  <span class="CT">/* Parameters:  Timer Pointer, CPU Freq in MHz, Period in usec. */</span>
+</span><span><a class="LN" name="22">   22   </a>  ConfigCpuTimer(&amp;CpuTimer0, 150.0, 0.01 * 1000000);
+</span><span><a class="LN" name="23">   23   </a>  StartCpuTimer0();
+</span><span><a class="LN" name="24">   24   </a><b>}</b>
+</span><span><a class="LN" name="25">   25   </a>
+</span><span><a class="LN" name="26">   26   </a><span class="DT">void</span> <a name="fcn_disableWatchdog">disableWatchdog</a>(<span class="DT">void</span>)
+</span><span><a class="LN" name="27">   27   </a><b>{</b>
+</span><span><a class="LN" name="28">   28   </a>  <span class="DT">int</span> *WatchdogWDCR = (<span class="DT">void</span> *) 0x7029;
+</span><span><a class="LN" name="29">   29   </a>  asm(<font color="#1122ff">&quot; EALLOW &quot;</font>);
+</span><span><a class="LN" name="30">   30   </a>  *WatchdogWDCR = 0x0068;
+</span><span><a class="LN" name="31">   31   </a>  asm(<font color="#1122ff">&quot; EDIS &quot;</font>);
+</span><span><a class="LN" name="32">   32   </a><b>}</b>
+</span><span><a class="LN" name="33">   33   </a>
+</span><span><a class="LN" name="34">   34   </a>interrupt <span class="DT">void</span> <a name="fcn_TINT0_isr">TINT0_isr</a>(<span class="DT">void</span>)
+</span><span><a class="LN" name="35">   35   </a><b>{</b>
+</span><span><a class="LN" name="36">   36   </a>  <span class="DT">volatile</span> <span class="DT">unsigned</span> <span class="DT">int</span> PIEIER1_stack_save = PieCtrlRegs.PIEIER1.all;
+</span><span><a class="LN" name="37">   37   </a>  PieCtrlRegs.PIEIER1.all &amp;= ~64;      <span class="CT">/*disable group1 lower/equal priority interrupts*/</span>
+</span><span><a class="LN" name="38">   38   </a>  asm(<font color="#1122ff">&quot; RPT #5 || NOP&quot;</font>);               <span class="CT">/*wait 5 cycles        */</span>
+</span><span><a class="LN" name="39">   39   </a>  IFR &amp;= ~1;                           <span class="CT">/*eventually disable lower/equal priority pending interrupts*/</span>
+</span><span><a class="LN" name="40">   40   </a>  PieCtrlRegs.PIEACK.all = 1;          <span class="CT">/*ACK to allow other interrupts from the same group to fire*/</span>
+</span><span><a class="LN" name="41">   41   </a>  IER |= 1;
+</span><span><a class="LN" name="42">   42   </a>  EINT;                                <span class="CT">/*global interrupt enable*/</span>
+</span><span><a class="LN" name="43">   43   </a>  <a href="PIDCtrl_2_main_c.html#fcn_rt_OneStep" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_rt_OneStep');" target="_self"><font color="#1122aa">rt_OneStep</font></a>();
+</span><span><a class="LN" name="44">   44   </a>  DINT;                                <span class="CT">/* disable global interrupts during context switch, CPU will enable global interrupts after exiting ISR    */</span>
+</span><span><a class="LN" name="45">   45   </a>  PieCtrlRegs.PIEIER1.all = PIEIER1_stack_save;<span class="CT">/*restore PIEIER register that was modified*/</span>
+</span><span><a class="LN" name="46">   46   </a><b>}</b>
+</span><span><a class="LN" name="47">   47   </a>
+</span><span><a class="LN" name="48">   48   </a><span class="DT">void</span> <a name="fcn_enable_interrupts">enable_interrupts</a>()
+</span><span><a class="LN" name="49">   49   </a><b>{</b>
+</span><span><a class="LN" name="50">   50   </a>  EALLOW;
+</span><span><a class="LN" name="51">   51   </a>  PieVectTable.TINT0 = &amp;<a href="#fcn_TINT0_isr" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'fcn_TINT0_isr');" target="_self"><font color="#1122aa">TINT0_isr</font></a>;     <span class="CT">/* Hook interrupt to the ISR*/</span>
+</span><span><a class="LN" name="52">   52   </a>  EDIS;
+</span><span><a class="LN" name="53">   53   </a>  PieCtrlRegs.PIEIER1.bit.INTx7 = 1;   <span class="CT">/* Enable interrupt TINT0*/</span>
+</span><span><a class="LN" name="54">   54   </a>  IER |= M_INT1;
+</span><span><a class="LN" name="55">   55   </a>
+</span><span><a class="LN" name="56">   56   </a>  <span class="CT">/* Enable global Interrupts and higher priority real-time debug events:*/</span>
+</span><span><a class="LN" name="57">   57   </a>  EINT;                                <span class="CT">/* Enable Global interrupt INTM*/</span>
+</span><span><a class="LN" name="58">   58   </a>  ERTM;                                <span class="CT">/* Enable Global realtime interrupt DBGM*/</span>
+</span><span><a class="LN" name="59">   59   </a><b>}</b>
+</span><span><a class="LN" name="60">   60   </a>
+</span><span><a class="LN" name="61">   61   </a><span class="DT">void</span> <a name="fcn_disable_interrupts">disable_interrupts</a>()
+</span><span><a class="LN" name="62">   62   </a><b>{</b>
+</span><span><a class="LN" name="63">   63   </a>  IER &amp;= M_INT1;                       <span class="CT">/* Disable Global INT1 (CPU Interrupt 1)*/</span>
+</span><span><a class="LN" name="64">   64   </a>  DINT;                                <span class="CT">/* Disable Global interrupt INTM*/</span>
+</span><span><a class="LN" name="65">   65   </a><b>}</b>
+</span><span><a class="LN" name="66">   66   </a>
+</span><span><a class="LN" name="67">   67   </a><span class="DT">void</span> <a name="fcn_init_SCI">init_SCI</a>(<span class="DT">void</span>)
+</span><span><a class="LN" name="68">   68   </a><b>{</b>                                      <span class="CT">/* initialize SCI & FIFO registers */</span>
+</span><span><a class="LN" name="69">   69   </a>  EALLOW;
+</span><span><a class="LN" name="70">   70   </a>
+</span><span><a class="LN" name="71">   71   </a>  <span class="CT">/*</span>
+</span><span><a class="LN" name="72">   72   </a><span class="CT">   * Initialize SCI_B with following parameters:</span>
+</span><span><a class="LN" name="73">   73   </a><span class="CT">   *    BaudRate              : 114329</span>
+</span><span><a class="LN" name="74">   74   </a><span class="CT">   *    CharacterLengthBits   : 8</span>
+</span><span><a class="LN" name="75">   75   </a><span class="CT">   *    EnableLoopBack        : 0</span>
+</span><span><a class="LN" name="76">   76   </a><span class="CT">   *    NumberOfStopBits      : 1</span>
+</span><span><a class="LN" name="77">   77   </a><span class="CT">   *    ParityMode            : None</span>
+</span><span><a class="LN" name="78">   78   </a><span class="CT">   *    SuspensionMode        : Free_run</span>
+</span><span><a class="LN" name="79">   79   </a><span class="CT">   *    CommMode              : Raw_data</span>
+</span><span><a class="LN" name="80">   80   </a><span class="CT">   */</span>
+</span><span><a class="LN" name="81">   81   </a>  ScibRegs.SCICCR.bit.STOPBITS = 0;    <span class="CT">/*Number of stop bits. (0: One stop bit, 1: Two stop bits)*/</span>
+</span><span><a class="LN" name="82">   82   </a>  ScibRegs.SCICCR.bit.PARITY = 0;      <span class="CT">/*Parity mode (0: Odd parity, 1: Even parity)*/</span>
+</span><span><a class="LN" name="83">   83   </a>  ScibRegs.SCICCR.bit.PARITYENA = 0;   <span class="CT">/*Enable Pary Mode */</span>
+</span><span><a class="LN" name="84">   84   </a>  ScibRegs.SCICCR.bit.LOOPBKENA = 0;   <span class="CT">/*Loop Back enable*/</span>
+</span><span><a class="LN" name="85">   85   </a>  ScibRegs.SCICCR.bit.ADDRIDLE_MODE = 0;<span class="CT">/*ADDR/IDLE Mode control*/</span>
+</span><span><a class="LN" name="86">   86   </a>  ScibRegs.SCICCR.bit.SCICHAR = 7;     <span class="CT">/*Character length*/</span>
+</span><span><a class="LN" name="87">   87   </a>  ScibRegs.SCICTL1.bit.RXERRINTENA = 0;<span class="CT">/*Disable receive error interrupt*/</span>
+</span><span><a class="LN" name="88">   88   </a>  ScibRegs.SCICTL1.bit.SWRESET = 1;    <span class="CT">/*Software reset*/</span>
+</span><span><a class="LN" name="89">   89   </a>  ScibRegs.SCICTL1.bit.TXENA = 0;      <span class="CT">/* SCI transmitter enable*/</span>
+</span><span><a class="LN" name="90">   90   </a>  ScibRegs.SCICTL1.bit.RXENA = 1;      <span class="CT">/* SCI receiver enable*/</span>
+</span><span><a class="LN" name="91">   91   </a>  ScibRegs.SCIHBAUD = 0U;
+</span><span><a class="LN" name="92">   92   </a>  ScibRegs.SCILBAUD = 40U;
+</span><span><a class="LN" name="93">   93   </a>
+</span><span><a class="LN" name="94">   94   </a>  <span class="CT">/*Free run, continue SCI operation regardless of suspend*/</span>
+</span><span><a class="LN" name="95">   95   </a>  ScibRegs.SCIPRI.bit.FREE = 1;        <span class="CT">/* Free emulation mode control*/</span>
+</span><span><a class="LN" name="96">   96   </a>  ScibRegs.SCIPRI.bit.SOFT = 0;        <span class="CT">/* Interrupt priority select*/</span>
+</span><span><a class="LN" name="97">   97   </a>  ScibRegs.SCIFFCT.bit.ABDCLR = 0;
+</span><span><a class="LN" name="98">   98   </a>  ScibRegs.SCIFFCT.bit.CDC = 0;
+</span><span><a class="LN" name="99">   99   </a>  ScibRegs.SCIFFTX.bit.SCIRST = 1;     <span class="CT">/* SCI reset rx/tx channels*/</span>
+</span><span><a class="LN" name="100">  100   </a>  ScibRegs.SCIFFTX.bit.SCIFFENA = 1;   <span class="CT">/* SCI FIFO enhancements are enabled.*/</span>
+</span><span><a class="LN" name="101">  101   </a>  ScibRegs.SCIFFTX.bit.TXFIFOXRESET = 1;<span class="CT">/* Re-enable transmit FIFO operation.*/</span>
+</span><span><a class="LN" name="102">  102   </a>  ScibRegs.SCIFFRX.bit.RXFIFORESET = 1;<span class="CT">/* Re-enable receive FIFO operation.*/</span>
+</span><span><a class="LN" name="103">  103   </a>
+</span><span><a class="LN" name="104">  104   </a>  <span class="CT">/*</span>
+</span><span><a class="LN" name="105">  105   </a><span class="CT">   * Initialize SCI_C with following parameters:</span>
+</span><span><a class="LN" name="106">  106   </a><span class="CT">   *    BaudRate              : 114329</span>
+</span><span><a class="LN" name="107">  107   </a><span class="CT">   *    CharacterLengthBits   : 8</span>
+</span><span><a class="LN" name="108">  108   </a><span class="CT">   *    EnableLoopBack        : 0</span>
+</span><span><a class="LN" name="109">  109   </a><span class="CT">   *    NumberOfStopBits      : 1</span>
+</span><span><a class="LN" name="110">  110   </a><span class="CT">   *    ParityMode            : None</span>
+</span><span><a class="LN" name="111">  111   </a><span class="CT">   *    SuspensionMode        : Free_run</span>
+</span><span><a class="LN" name="112">  112   </a><span class="CT">   *    CommMode              : Raw_data</span>
+</span><span><a class="LN" name="113">  113   </a><span class="CT">   */</span>
+</span><span><a class="LN" name="114">  114   </a>  ScicRegs.SCICCR.bit.STOPBITS = 0;    <span class="CT">/*Number of stop bits. (0: One stop bit, 1: Two stop bits)*/</span>
+</span><span><a class="LN" name="115">  115   </a>  ScicRegs.SCICCR.bit.PARITY = 0;      <span class="CT">/*Parity mode (0: Odd parity, 1: Even parity)*/</span>
+</span><span><a class="LN" name="116">  116   </a>  ScicRegs.SCICCR.bit.PARITYENA = 0;   <span class="CT">/*Enable Pary Mode */</span>
+</span><span><a class="LN" name="117">  117   </a>  ScicRegs.SCICCR.bit.LOOPBKENA = 0;   <span class="CT">/*Loop Back enable*/</span>
+</span><span><a class="LN" name="118">  118   </a>  ScicRegs.SCICCR.bit.ADDRIDLE_MODE = 0;<span class="CT">/*ADDR/IDLE Mode control*/</span>
+</span><span><a class="LN" name="119">  119   </a>  ScicRegs.SCICCR.bit.SCICHAR = 7;     <span class="CT">/*Character length*/</span>
+</span><span><a class="LN" name="120">  120   </a>  ScicRegs.SCICTL1.bit.RXERRINTENA = 0;<span class="CT">/*Disable receive error interrupt*/</span>
+</span><span><a class="LN" name="121">  121   </a>  ScicRegs.SCICTL1.bit.SWRESET = 1;    <span class="CT">/*Software reset*/</span>
+</span><span><a class="LN" name="122">  122   </a>  ScicRegs.SCICTL1.bit.TXENA = 1;      <span class="CT">/* SCI transmitter enable*/</span>
+</span><span><a class="LN" name="123">  123   </a>  ScicRegs.SCICTL1.bit.RXENA = 1;      <span class="CT">/* SCI receiver enable*/</span>
+</span><span><a class="LN" name="124">  124   </a>  ScicRegs.SCIHBAUD = 0U;
+</span><span><a class="LN" name="125">  125   </a>  ScicRegs.SCILBAUD = 40U;
+</span><span><a class="LN" name="126">  126   </a>
+</span><span><a class="LN" name="127">  127   </a>  <span class="CT">/*Free run, continue SCI operation regardless of suspend*/</span>
+</span><span><a class="LN" name="128">  128   </a>  ScicRegs.SCIPRI.bit.FREE = 1;        <span class="CT">/* Free emulation mode control*/</span>
+</span><span><a class="LN" name="129">  129   </a>  ScicRegs.SCIPRI.bit.SOFT = 0;        <span class="CT">/* Interrupt priority select*/</span>
+</span><span><a class="LN" name="130">  130   </a>  ScicRegs.SCIFFCT.bit.ABDCLR = 0;
+</span><span><a class="LN" name="131">  131   </a>  ScicRegs.SCIFFCT.bit.CDC = 0;
+</span><span><a class="LN" name="132">  132   </a>  ScicRegs.SCIFFTX.bit.SCIRST = 1;     <span class="CT">/* SCI reset rx/tx channels*/</span>
+</span><span><a class="LN" name="133">  133   </a>  ScicRegs.SCIFFTX.bit.SCIFFENA = 1;   <span class="CT">/* SCI FIFO enhancements are enabled.*/</span>
+</span><span><a class="LN" name="134">  134   </a>  ScicRegs.SCIFFTX.bit.TXFIFOXRESET = 1;<span class="CT">/* Re-enable transmit FIFO operation.*/</span>
+</span><span><a class="LN" name="135">  135   </a>  ScicRegs.SCIFFRX.bit.RXFIFORESET = 1;<span class="CT">/* Re-enable receive FIFO operation.*/</span>
+</span><span><a class="LN" name="136">  136   </a>  EDIS;
+</span><span><a class="LN" name="137">  137   </a><b>}</b>
+</span><span><a class="LN" name="138">  138   </a>
+</span><span><a class="LN" name="139">  139   </a><span class="DT">void</span> <a name="fcn_init_SCI_GPIO">init_SCI_GPIO</a>(<span class="DT">void</span>)
+</span><span><a class="LN" name="140">  140   </a><b>{</b>
+</span><span><a class="LN" name="141">  141   </a>  EALLOW;
+</span><span><a class="LN" name="142">  142   </a>  GpioCtrlRegs.GPAPUD.bit.GPIO19 = 0;  <span class="CT">/*Enable pull-up for GPIO19*/</span>
+</span><span><a class="LN" name="143">  143   </a>  GpioCtrlRegs.GPAMUX2.bit.GPIO19 = 2; <span class="CT">/*Configure GPIO19 as SCIRXDB*/</span>
+</span><span><a class="LN" name="144">  144   </a>  GpioCtrlRegs.GPBPUD.bit.GPIO62 = 0;  <span class="CT">/*Enable pull-up for GPIO62*/</span>
+</span><span><a class="LN" name="145">  145   </a>  GpioCtrlRegs.GPBMUX2.bit.GPIO62 = 1; <span class="CT">/*Configure GPIO62 as SCIRXDA*/</span>
+</span><span><a class="LN" name="146">  146   </a>  GpioCtrlRegs.GPBPUD.bit.GPIO63 = 0;  <span class="CT">/*Enable pull-up for GPIO63*/</span>
+</span><span><a class="LN" name="147">  147   </a>  GpioCtrlRegs.GPBMUX2.bit.GPIO63 = 1; <span class="CT">/*Configure GPIO63 as SCITXDA*/</span>
+</span><span><a class="LN" name="148">  148   </a>  EDIS;
+</span><span><a class="LN" name="149">  149   </a><b>}</b>
+</span><span><a class="LN" name="150">  150   </a>
+</span></pre>
+</td></tr></table>
+</p>
+</body>
+</html>
